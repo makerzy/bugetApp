@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BudgetManager">
         <activity
+            android:name=".SavingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CardTransactions"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

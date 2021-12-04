@@ -34,12 +34,12 @@ public class MainActivity extends AppCompatActivity {
         TextView buyCrypto = (TextView) findViewById(R.id.feature3);
 
 
-        mainIntent = new Intent(MainActivity.this, CardTransactions.class);
 
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Log.v("Position", "" + position);
+                mainIntent = new Intent(MainActivity.this, CardTransactions.class);
                 mainIntent.putExtra("cardTrx", bankNames[position]); //Optional parameters
                 MainActivity.this.startActivity(mainIntent);
             }
@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         seeMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mainIntent = new Intent(MainActivity.this, CardTransactions.class);
                 mainIntent.putExtra("cardTrx", "allTrx"); //Optional parameters
                 MainActivity.this.startActivity(mainIntent);
             }

@@ -27,7 +27,7 @@ public class SavingActivity extends AppCompatActivity {
         String[] savingGoals = { "Buy a House\n", "Buy a new Car\n", "Buy a new iPhone\n"};
 
         ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,savingGoals);
+        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_2,savingGoals);
         ListView listView = (ListView) findViewById(R.id.goals);
         listView.setAdapter(adapter);
 

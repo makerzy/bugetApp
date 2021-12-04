@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BudgetManager">
         <activity
+            android:name=".Goals"
+            android:exported="false" />
+        <activity
             android:name=".SavingActivity"
             android:exported="false" />
         <activity

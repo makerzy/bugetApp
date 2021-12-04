@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SavingActivity">
+
+
+    <LinearLayout
+        android:id="@+id/goalsWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/goals"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:textSize="20dp"
+            >
+
+
+        </ListView>
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/createGoal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/goalsWrapper"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal">
+
+
+
+            <EditText
+                android:layout_width="500dp"
+                android:layout_height="40dp"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:id="@+id/goalDesc"
+                android:hint="Create a new Goal" />
+
+
+
+
+            <EditText
+                android:layout_width="500dp"
+                android:layout_height="40dp"
+                android:gravity="center_horizontal"
+                android:layout_below="@+id/goalDesc"
+                android:id="@+id/goalValue"
+                android:textSize="20sp"
+                android:inputType="number"
+                android:hint="Enter Goal Value" />
+
+
+        <Button
+            android:id="@+id/create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/goalValue"
+            android:layout_centerHorizontal="true"
+            android:text="Create Goals" />
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

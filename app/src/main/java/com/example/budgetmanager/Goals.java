@@ -7,24 +7,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.google.android.material.textfield.TextInputEditText;
-
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class Goals extends AppCompatActivity {
+    GoalObject house= new GoalObject("Buy a House", 100000);
+    GoalObject car = new GoalObject("Buy a new Car", 40000);
+    GoalObject phone = new GoalObject("Buy a new iPhone" , 9000);
 
+    ArrayList<GoalObject> goalObjects = new ArrayList<GoalObject>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,23 +35,25 @@ public class Goals extends AppCompatActivity {
         final EditText goalValue = (EditText) findViewById(R.id.goalValue);
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
-        ArrayList<String> savingGoals = new ArrayList<String>();
 
-        savingGoals.add( "Buy a House\nSaved:                    $2,000");
-        savingGoals.add("Buy a new Car\nSaved:                    $4,000");
-        savingGoals.add("Buy a new iPhone\nSaved:                    $200");
+        initGoals ();
 
+        ArrayList <String> keys = new ArrayList<String>();
+        keys.add("house");
+        keys.add("car") ;
+        keys.add("phone");
+        ArrayList <String> savingGoals = new ArrayList<String>();
 
-        editor.putString("key1", "$100,000.00");
-        editor.putString("key2", "$40,000.00");
-        editor.putString("key3", "$900.00");
-        editor.commit();
+        savingGoals.add(getGoalString(0));
+        savingGoals.add(getGoalString(1));
+        savingGoals.add(getGoalString(2));
+
 
         ArrayAdapter<String> adapter;
         adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,savingGoals);
         ListView listView = (ListView) findViewById(R.id.goals);
         listView.setAdapter(adapter);
-
+        // Todo use editor for value storage
         createGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,11 +62,13 @@ public class Goals extends AppCompatActivity {
                     String goalDesc =goal.getText().toString().trim();
                     double  maxValue = Double.parseDouble(goalValue.getText().toString());
                     int position = savingGoals.size();
-                    editor.putString("key"+position,  String.valueOf(maxValue));
+                    goalObjects.add(new GoalObject(goalDesc, maxValue));
+                    Log.d("Size", String.valueOf(position));
+                    keys.add("key-"+position);
+                    savingGoals.add(getGoalString(position));
                     Log.d("Goal desc", goalDesc);
                     Log.d("Goal value", String.valueOf(maxValue));
-                    String newGoal = goalDesc + "\n" + "Saved:             $0.00";
-                    adapter.add(newGoal);
+                    adapter.add(getGoalString(position));
                     adapter.notifyDataSetChanged();
                     editor.commit();
                 }
@@ -79,13 +80,35 @@ public class Goals extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = (String) parent.getItemAtPosition(position);
 
-                Log.d("item clicked: ", selectedItem);
+
                 Intent savingIntent = new Intent(Goals.this, SavingDetails.class);
                 savingIntent.putExtra("position", position); //Optional parameters
+
                 Goals.this.startActivity(savingIntent);
             }
         });
 
 
     }
+    public void initGoals (){
+        house.setSaved(2000);
+        car.setSaved(10000);
+        phone.setSaved(300);
+
+        goalObjects.add(house);
+        goalObjects.add( car);
+        goalObjects.add( phone);
+    }
+
+    private String getGoalString(int goalIndex) {
+
+        GoalObject goal = getGoal(goalIndex);
+        return goal.getGoalDesc() + "\n" + "Saved:       "+ Utils.formatCurrency(goal.getSaved());
+    }
+
+    public GoalObject getGoal(int index){
+
+        return goalObjects.get(index);
+    }
+
 }

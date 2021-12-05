@@ -67,7 +67,7 @@ public class CardTransactions extends AppCompatActivity {
             String[] concated = concatArrays(citi_bank_trx, wells_fargo_trx);
             concated = concatArrays(concated, discover_trx);
             concated = concatArrays(concated, chase_trx);
-            setTitle("All Recent Transactions");
+            setTitle("Transaction History");
             Log.v("CardTx", cardTrx);
             adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,concated);
             ListView listView = (ListView) findViewById(R.id.transaction);

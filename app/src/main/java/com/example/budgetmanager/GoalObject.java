@@ -5,12 +5,16 @@ public class GoalObject {
     double value;
     double saved;
     String goalDesc;
+    String goalId;
 
     public  GoalObject(String _title, double _value) {
         this.value = _value;
         this.goalDesc = _title;
         this.saved = 0;
+        goalId = Utils.toId(_title, String.valueOf(_value));
     }
+
+
 
     public void setValue(float value) {
         this.value = value;
@@ -30,5 +34,9 @@ public class GoalObject {
 
     public String getGoalDesc() {
         return goalDesc;
+    }
+
+    public String getGoalId() {
+        return goalId;
     }
 }

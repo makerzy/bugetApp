@@ -15,13 +15,23 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Goals extends AppCompatActivity {
-    GoalObject house= new GoalObject("Buy a House", 100000);
+    GoalObject house = new GoalObject("Buy a House", 100000);
     GoalObject car = new GoalObject("Buy a new Car", 40000);
-    GoalObject phone = new GoalObject("Buy a new iPhone" , 9000);
+    GoalObject phone = new GoalObject("Buy a new iPhone", 9000);
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
 
     ArrayList<GoalObject> goalObjects = new ArrayList<GoalObject>();
+
+    public void Goals() {
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = sharedPref.edit();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,19 +40,12 @@ public class Goals extends AppCompatActivity {
         setTitle("Saving Towards a Goal");
         Intent intent = getIntent();
         String savingType = intent.getStringExtra("savingType");
-        final  Button createGoal = (Button) findViewById(R.id.create);
+        final Button createGoal = (Button) findViewById(R.id.create);
         final EditText goal = (EditText) findViewById(R.id.goalDesc);
         final EditText goalValue = (EditText) findViewById(R.id.goalValue);
-        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPref.edit();
 
-        initGoals ();
-
-        ArrayList <String> keys = new ArrayList<String>();
-        keys.add("house");
-        keys.add("car") ;
-        keys.add("phone");
-        ArrayList <String> savingGoals = new ArrayList<String>();
+        ArrayList<String> savingGoals = new ArrayList<String>();
+        initGoals();
 
         savingGoals.add(getGoalString(0));
         savingGoals.add(getGoalString(1));
@@ -50,25 +53,28 @@ public class Goals extends AppCompatActivity {
 
 
         ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,savingGoals);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, savingGoals);
         ListView listView = (ListView) findViewById(R.id.goals);
         listView.setAdapter(adapter);
         // Todo use editor for value storage
         createGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!goal.getText().toString().trim().isEmpty() && !goalValue.getText().toString().isEmpty()){
+                if (!goal.getText().toString().trim().isEmpty() && !goalValue.getText().toString().isEmpty()) {
 
-                    String goalDesc =goal.getText().toString().trim();
-                    double  maxValue = Double.parseDouble(goalValue.getText().toString());
+                    String goalDesc = goal.getText().toString().trim();
+                    double maxValue = Double.parseDouble(goalValue.getText().toString());
                     int position = savingGoals.size();
-                    goalObjects.add(new GoalObject(goalDesc, maxValue));
+                    GoalObject newGoal = new GoalObject(goalDesc, maxValue);
+                    newGoal.setSaved(0.00);
+                    goalObjects.add(newGoal);
                     Log.d("Size", String.valueOf(position));
-                    keys.add("key-"+position);
                     savingGoals.add(getGoalString(position));
-                    Log.d("Goal desc", goalDesc);
-                    Log.d("Goal value", String.valueOf(maxValue));
-                    adapter.add(getGoalString(position));
+                    Set<String> hashStr = new HashSet<String>();
+                    hashStr.add(goalDesc);
+                    hashStr.add(String.valueOf(maxValue));
+                    hashStr.add(String.valueOf(0.00));
+                    editor.putStringSet("key" + position, hashStr);
                     adapter.notifyDataSetChanged();
                     editor.commit();
                 }
@@ -78,7 +84,7 @@ public class Goals extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedItem = (String) parent.getItemAtPosition(position);
+//                String selectedItem = (String) parent.getItemAtPosition(position);
 
 
                 Intent savingIntent = new Intent(Goals.this, SavingDetails.class);
@@ -90,25 +96,43 @@ public class Goals extends AppCompatActivity {
 
 
     }
-    public void initGoals (){
-        house.setSaved(2000);
-        car.setSaved(10000);
-        phone.setSaved(300);
+
+    public void initGoals() {
+
+        house.setSaved(Double.compare(Double.parseDouble(sharedPref.getString(house.getGoalId(), "0.00")), 0) == 0 ? 2000 : Double.parseDouble(sharedPref.getString(house.getGoalId(), "0.00")));
+        car.setSaved(Double.compare(Double.parseDouble(sharedPref.getString(car.getGoalId(), "0.00")), 0) == 0 ? 10000 : Double.parseDouble(sharedPref.getString(car.getGoalId(), "0.00")));
+
+        phone.setSaved(Double.compare(Double.parseDouble(sharedPref.getString(phone.getGoalId(), "0.00")), 0) == 0 ? 300 : Double.parseDouble(sharedPref.getString(phone.getGoalId(), "0.00")));
+
 
         goalObjects.add(house);
-        goalObjects.add( car);
-        goalObjects.add( phone);
+        goalObjects.add(car);
+        goalObjects.add(phone);
+
+
     }
 
     private String getGoalString(int goalIndex) {
 
         GoalObject goal = getGoal(goalIndex);
-        return goal.getGoalDesc() + "\n" + "Saved:       "+ Utils.formatCurrency(goal.getSaved());
+        return goal.getGoalDesc() + "\n" + "Saved:       " + Utils.formatCurrency(goal.getSaved());
     }
 
-    public GoalObject getGoal(int index){
+    public GoalObject getGoal(int index) {
 
         return goalObjects.get(index);
     }
 
+    public ArrayList<GoalObject> getGoals() {
+        return goalObjects;
+    }
+
+    public ArrayList<String> getGoalsId() {
+        ArrayList<String> ids = new ArrayList<String>();
+        for (int i = 0; i < goalObjects.size(); i++) {
+            ids.add(goalObjects.get(i).getGoalId());
+        }
+
+        return ids;
+    }
 }
